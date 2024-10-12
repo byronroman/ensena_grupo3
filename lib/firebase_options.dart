@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -59,4 +47,41 @@ class DefaultFirebaseOptions {
     projectId: 'ensena-capstone-grupo3',
     storageBucket: 'ensena-capstone-grupo3.appspot.com',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAxPQ-qd8Et10UyvosTQb3WEZfG7QhvyV0',
+    appId: '1:772143071518:web:7e23bafc7a933ee55cc90f',
+    messagingSenderId: '772143071518',
+    projectId: 'ensena-capstone-grupo3',
+    authDomain: 'ensena-capstone-grupo3.firebaseapp.com',
+    storageBucket: 'ensena-capstone-grupo3.appspot.com',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBuxHnTnqN6UYRX8UMZraAZnvAsSfeAzE8',
+    appId: '1:772143071518:ios:bbdda26e725e05075cc90f',
+    messagingSenderId: '772143071518',
+    projectId: 'ensena-capstone-grupo3',
+    storageBucket: 'ensena-capstone-grupo3.appspot.com',
+    iosBundleId: 'com.example.ensenaGrupo3',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBuxHnTnqN6UYRX8UMZraAZnvAsSfeAzE8',
+    appId: '1:772143071518:ios:6e114bedc57df67c5cc90f',
+    messagingSenderId: '772143071518',
+    projectId: 'ensena-capstone-grupo3',
+    storageBucket: 'ensena-capstone-grupo3.appspot.com',
+    iosBundleId: 'com.grupo3.ensena',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAxPQ-qd8Et10UyvosTQb3WEZfG7QhvyV0',
+    appId: '1:772143071518:web:1c4d0733fb1b0f575cc90f',
+    messagingSenderId: '772143071518',
+    projectId: 'ensena-capstone-grupo3',
+    authDomain: 'ensena-capstone-grupo3.firebaseapp.com',
+    storageBucket: 'ensena-capstone-grupo3.appspot.com',
+  );
+
 }
