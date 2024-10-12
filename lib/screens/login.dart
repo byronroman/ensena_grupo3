@@ -40,7 +40,7 @@ class Login extends StatelessWidget {
                 const SizedBox(height: 40),
                 ElevatedButton.icon(
                   onPressed: () {}, // Aquí irá la función de Google Sign-in
-                  icon: const Icon(Icons.email),
+                  icon: Image.asset('assets/google_icon.png', height: 24), // Icono de Google
                   label: const Text('Iniciar sesión con Google'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -48,11 +48,13 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () {}, // Aquí irá la función para iniciar sesión con mail
-                  child: const Text('Iniciar sesión con mail'),
+                  icon: const Icon(Icons.email),
+                  label: const Text('Iniciar sesión con correo electrónico'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: const Color.fromARGB(255, 248, 57, 57),
+                    foregroundColor: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -63,9 +65,20 @@ class Login extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => Register()),
                     );
                   },
-                  child: const Text(
-                    '¿No tienes cuenta? Regístrate aquí',
-                    style: TextStyle(color: Colors.white),
+                  child: RichText(
+                    text: TextSpan(
+                      text: '¿No tienes cuenta? ', // Texto en gris
+                      style: TextStyle(color: const Color.fromARGB(255, 209, 209, 209)),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Regístrate aquí', // Texto en blanco y negrita
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
