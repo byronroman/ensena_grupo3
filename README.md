@@ -1,12 +1,12 @@
-# EnSEÑA: Lengua de Señas App
+# EnSEÑA: App de Lengua de Señas
 
-**EnSEÑA** is an innovative mobile application designed to teach sign language in an interactive and accessible way. Utilizing **AI** and **real-time gesture recognition**, users can learn how to sign through an engaging and personalized experience. The app supports multiple languages and offers lessons from basic to advanced levels, validated using **TensorFlow Lite**.
+**EnSEÑA** es una aplicación móvil innovadora diseñada para enseñar lengua de señas de manera interactiva y accesible. Utilizando **IA** y **reconocimiento de gestos en tiempo real**, los usuarios pueden aprender a hacer señas a través de una experiencia personalizada y atractiva. La aplicación admite varios idiomas y ofrece lecciones desde niveles básicos hasta avanzados, validadas utilizando **TensorFlow Lite**.
 
-## Features
+## Funcionalidades
 
-- **User Authentication**: Secure sign-in via email, Google, Facebook, and more, using **Firebase Authentication**.
-- **Interactive Lessons**: Users can follow step-by-step lessons, practice sign language, and get real-time feedback using **AI** for gesture validation.
-- **Multimedia Support**: Seamless integration with **Firebase Cloud Storage** for handling multimedia content such as videos and images.
-- **Progress Tracking**: Keep track of your learning journey and unlock badges upon completing lessons.
-- **Push Notifications**: Receive reminders and updates through **Firebase Cloud Messaging**.
-- **Bilingual Lessons**: Learn sign language in multiple languages like Spanish and English.
+- **Autenticación de usuarios**: Inicio de sesión seguro a través de correo electrónico, Google, Facebook y otros, utilizando **Firebase Authentication**.
+- **Lecciones interactivas**: Los usuarios pueden seguir lecciones paso a paso, practicar lengua de señas y recibir retroalimentación en tiempo real utilizando **IA** para la validación de gestos.
+- **Soporte multimedia**: Integración fluida con **Firebase Cloud Storage** para gestionar contenido multimedia, como videos e imágenes.
+- **Seguimiento de progreso**: Mantén un registro de tu progreso en el aprendizaje y desbloquea insignias al completar lecciones.
+- **Notificaciones push**: Recibe recordatorios y actualizaciones a través de **Firebase Cloud Messaging**.
+- **Lecciones bilingües**: Aprende lengua de señas en varios idiomas, como español e inglés.
