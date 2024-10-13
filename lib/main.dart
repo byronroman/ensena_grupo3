@@ -1,9 +1,14 @@
 import 'package:ensena_grupo3/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/login.dart';
+import 'pages/login_page.dart';
+import 'pages/register_page.dart';
+import 'pages/home.dart';
+import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  await PreferenciasUsuario.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -14,11 +19,14 @@ class EnsenaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EnSEÑA App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Login(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: Login.routename,
+      routes: {
+        Login.routename  : (context) =>   Login(),
+        HomePage.routename: (context) => const HomePage(),
+        RegistroPages.routename: (context) =>  RegistroPages(),
+
+      },
     );
   }
 }

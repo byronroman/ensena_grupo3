@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
-import 'login.dart';  // Asegúrate de tener la pantalla de Login para poder volver a ella
+import 'package:firebase_auth/firebase_auth.dart';  // Para autenticación en Firebase
+import 'package:cloud_firestore/cloud_firestore.dart'; // Para guardar datos en Firestore
+import 'home.dart';  
+import 'login_page.dart';  // 
+import 'package:flutter/material.dart';
+import 'package:ensena_grupo3/util/auth.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:ensena_grupo3/pages/home.dart';
+import 'package:ensena_grupo3/pages/login_page.dart';
+import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
+import 'package:ensena_grupo3/util/snackbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Register extends StatefulWidget {
+class RegistroPages extends StatefulWidget {
   @override
+  static const String routename = 'RegistroPages'; 
   _RegisterState createState() => _RegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterState extends State<RegistroPages> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -22,6 +35,7 @@ class _RegisterState extends State<Register> {
   bool _hasEmailStarted = false;
   bool _hasPasswordStarted = false;
 
+  // Validación de la contraseña
   bool get _isPasswordValid =>
       _isLengthValid &&
       _hasUppercase &&
@@ -29,12 +43,14 @@ class _RegisterState extends State<Register> {
       _hasDigit &&
       _hasSpecialChar;
 
+  // Validar el email
   void _validateEmail(String email) {
     setState(() {
       _isEmailValid = email.contains('@');
     });
   }
 
+  // Validar la contraseña
   void _validatePassword(String password) {
     setState(() {
       _isLengthValid = password.length >= 8;
@@ -45,10 +61,12 @@ class _RegisterState extends State<Register> {
     });
   }
 
+  // Comprobar si se puede registrar
   bool _canRegister() {
     return _isUsernameValid && _isEmailValid && _isPasswordValid;
   }
 
+  // Método que genera el criterio de contraseña
   Widget _buildPasswordCriteria(String text, bool isValid) {
     return Row(
       children: [
@@ -65,6 +83,48 @@ class _RegisterState extends State<Register> {
         ),
       ],
     );
+  }
+
+  // Lógica para registrar el usuario en Firebase y navegar a Home
+  Future<void> _registerUser() async {
+    try {
+      // Ocultar el teclado al hacer clic en registrar
+      FocusScope.of(context).unfocus();
+
+      // Crear cuenta en Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Guardar información adicional en Firestore
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(userCredential.user?.uid)
+          .set({
+        'username': _usernameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
+      });
+
+      // Navegar a la pantalla de inicio después del registro
+      Navigator.pushReplacementNamed(context, HomePage.routename);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        _showErrorSnackbar('La contraseña es demasiado débil.');
+      } else if (e.code == 'email-already-in-use') {
+        _showErrorSnackbar('Este correo ya está en uso.');
+      } else {
+        _showErrorSnackbar('Error en el registro: ${e.message}');
+      }
+    }
+  }
+
+  // Mostrar un Snackbar de error
+  void _showErrorSnackbar(String message) {
+    final snackBar = SnackBar(content: Text(message), backgroundColor: Colors.red);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -278,7 +338,7 @@ class _RegisterState extends State<Register> {
 
                       // Botón de registro
                       ElevatedButton(
-                        onPressed: _canRegister() ? () {} : null,
+                        onPressed: _canRegister() ? _registerUser : null,
                         child: Text('Registrar'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _canRegister() ? Colors.purple : Colors.grey,
