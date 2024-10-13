@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EnSEÑA: App de Lengua de Señas
 
 **EnSEÑA** es una aplicación móvil innovadora diseñada para enseñar lengua de señas de manera interactiva y accesible. Utilizando **IA** y **reconocimiento de gestos en tiempo real**, los usuarios pueden aprender a hacer señas a través de una experiencia personalizada y atractiva. La aplicación admite varios idiomas y ofrece lecciones desde niveles básicos hasta avanzados, validadas utilizando **TensorFlow Lite**.
@@ -10,3 +11,11 @@
 - **Seguimiento de progreso**: Mantén un registro de tu progreso en el aprendizaje y desbloquea insignias al completar lecciones.
 - **Notificaciones push**: Recibe recordatorios y actualizaciones a través de **Firebase Cloud Messaging**.
 - **Lecciones bilingües**: Aprende lengua de señas en varios idiomas, como español e inglés.
+=======
+<<<<<<< HEAD
+flutter pub run change_app_package_name:main com.grupo3.ensena
+=======
+# EnSena_CapstoneGrupo3
+Desarrollo de la aplicacion EnSeña.
+>>>>>>> 990e6c78d7b76d94934e3e6d063dcb81d1f52efc
+>>>>>>> RamaJESUS
