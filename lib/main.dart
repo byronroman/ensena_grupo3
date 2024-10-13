@@ -20,11 +20,11 @@ class EnsenaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: LoginPage.routename,
+      initialRoute: Login.routename,
       routes: {
-        LoginPage.routename  : (context) =>  const LoginPage(),
+        Login.routename  : (context) =>   Login(),
         HomePage.routename: (context) => const HomePage(),
-        RegistroPages.routename: (context) => const RegistroPages(),
+        RegistroPages.routename: (context) =>  RegistroPages(),
 
       },
     );

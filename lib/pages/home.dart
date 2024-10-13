@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(onPressed: () async {
             await FirebaseAuth.instance.signOut();
-            Navigator.popAndPushNamed(context, LoginPage.routename);
+            Navigator.popAndPushNamed(context, Login.routename);
           }, icon: const Icon(Icons.logout))
         ],
       ),
