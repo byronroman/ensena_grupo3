@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';  // Para autenticación en Fi
 import 'package:cloud_firestore/cloud_firestore.dart'; // Para guardar datos en Firestore
 import 'home.dart';  
 import 'login_page.dart';  // 
-
 import 'package:flutter/material.dart';
 import 'package:ensena_grupo3/util/auth.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
