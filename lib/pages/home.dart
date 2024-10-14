@@ -43,13 +43,12 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.lightBlue[50], // Cambia el fondo a un tono más suave
+            color: Colors.lightBlue[50], 
           ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Sección de cursos
               Text(
                 'Usuario',
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87),
@@ -89,7 +88,7 @@ class HomePage extends StatelessWidget {
                 context,
                 'Tu primera frase en lengua de señas',
                 'Inteligencia Artificial',
-                'assets/sign_language_image.png', // Imagen representativa de señas
+                'assets/IA_CATEGORIA.png', // Imagen representativa de señas
               ),
               SizedBox(height: 30),
               _buildComingSoonSection(),

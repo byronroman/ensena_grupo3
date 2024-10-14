@@ -8,7 +8,9 @@ import 'package:ensena_grupo3/pages/login_page.dart';
 import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
 import 'package:ensena_grupo3/util/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart
+
+import 'package:firebase_auth/firebase_auth.dart';
+
 class RegistroPages extends StatefulWidget {
   @override
   static const String routename = 'RegistroPages'; 
@@ -322,87 +324,7 @@ class _RegisterState extends State<RegistroPages> {
                         ),
                       SizedBox(height: 10),
 
-                      // Campo de contraseña
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: !_isPasswordVisible,
-                        onChanged: (value) {
-                          if (!_hasPasswordStarted) {
-                            setState(() {
-                              _hasPasswordStarted = true;
-                            });
-                          }
-                          _validatePassword(value);
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Ingresa tu contraseña',
-                          prefixIcon: Icon(Icons.lock),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                          ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      // Requisitos de la contraseña
-                      if (_hasPasswordStarted && !allCriteriaValid)
-                        Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            padding: EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: allCriteriaValid ? Colors.green[50] : Colors.red[50],
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: allCriteriaValid ? Colors.green : Colors.red,
-                                width: 1.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'La contraseña debe tener:',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: allCriteriaValid ? Colors.green : Colors.red,
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                _buildPasswordCriteria('Al menos 8 caracteres', _isLengthValid),
-                                _buildPasswordCriteria('Al menos una letra mayúscula', _hasUppercase),
-                                _buildPasswordCriteria('Al menos una letra minúscula', _hasLowercase),
-                                _buildPasswordCriteria('Al menos un número', _hasDigit),
-                                _buildPasswordCriteria('Al menos un carácter especial', _hasSpecialChar),
-                              ],
-                            ),
-                          ),
-
-                      SizedBox(height: 10),
-
+                  
                       // Requisitos de la contraseña
                       if (_hasPasswordStarted && !allCriteriaValid)
                         Center(
