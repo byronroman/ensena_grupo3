@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'pages/home.dart';
+import 'pages/configuracion.dart';
 import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +21,12 @@ class EnsenaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: LoginPage.routename,
+      initialRoute: Login.routename,
       routes: {
-        LoginPage.routename  : (context) =>  const LoginPage(),
-        HomePage.routename: (context) => const HomePage(),
-        RegistroPages.routename: (context) => const RegistroPages(),
+        Login.routename  : (context) =>   Login(),
+        HomePage.routename: (context) =>  HomePage(),
+        RegistroPages.routename: (context) =>  RegistroPages(),
+        ConfiguracionPage.routename: (context) =>  ConfiguracionPage()
 
       },
     );
