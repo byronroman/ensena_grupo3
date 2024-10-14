@@ -3,13 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';  // Para autenticación en Fi
 import 'home.dart';  // Pantalla de inicio a la que se navega después del login
 import 'register_page.dart';  // Pantalla de registro
 import 'package:cloud_firestore/cloud_firestore.dart';  // Firestore para obtener datos del usuario
-import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:ensena_grupo3/pages/home.dart';
-import 'package:ensena_grupo3/pages/register_page.dart';
-import 'package:ensena_grupo3/util/snackbar.dart';
-import 'package:ensena_grupo3/util/auth.dart';
+import 'recuperar_contraseña.dart';  // Pantalla de recuperación de contraseña
 
 class Login extends StatefulWidget {
   @override
@@ -21,18 +15,38 @@ class _LoginState extends State<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
+  int _failedAttempts = 0; // Contador de intentos fallidos
+  bool _isLocked = false; // Bloqueo temporal
+  Duration _lockDuration = Duration(seconds: 30); // Duración del bloqueo
+  DateTime? _lockEndTime; // Hora en la que se desbloquea
 
   // Lógica para el inicio de sesión con Firebase
   Future<void> _loginUser() async {
+    if (_isLocked) {
+      _showCustomDialog(
+        context,
+        'Demasiados intentos fallidos. Intenta nuevamente en ${_lockEndTime?.difference(DateTime.now()).inSeconds} segundos.',
+      );
+      return;
+    }
+
     try {
-      // Ocultar el teclado
-      FocusScope.of(context).unfocus();
+      FocusScope.of(context).unfocus(); // Ocultar el teclado
+
+      // Validar el formulario antes de intentar iniciar sesión
+      if (!_formKey.currentState!.validate()) {
+        return;
+      }
 
       // Realizar el inicio de sesión
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
+
+      // Reiniciar el contador de intentos fallidos en caso de éxito
+      _failedAttempts = 0;
 
       // Obtener el documento del usuario desde Firestore
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -40,29 +54,121 @@ class _LoginState extends State<Login> {
           .doc(userCredential.user?.uid)
           .get();
 
-      // Validar si el documento del usuario existe
       if (userDoc.exists) {
-        // Navegar a la pantalla de inicio
         Navigator.pushReplacementNamed(context, HomePage.routename);
       } else {
-        _showErrorSnackbar('Error: El usuario no tiene datos registrados.');
+        _showCustomDialog(context, 'Error: El usuario no tiene datos registrados.');
       }
     } on FirebaseAuthException catch (e) {
-      // Manejar errores de Firebase Authentication
-      if (e.code == 'user-not-found') {
-        _showErrorSnackbar('No existe ningún usuario con este correo.');
-      } else if (e.code == 'wrong-password') {
-        _showErrorSnackbar('Contraseña incorrecta.');
-      } else {
-        _showErrorSnackbar('Error en el inicio de sesión: ${e.message}');
-      }
+      _handleLoginError(e);
     }
   }
 
-  // Mostrar un Snackbar con el mensaje de error
-  void _showErrorSnackbar(String message) {
-    final snackBar = SnackBar(content: Text(message), backgroundColor: Colors.red);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // Manejo de errores de inicio de sesión
+  void _handleLoginError(FirebaseAuthException e) {
+    String? errorMessage;
+
+    switch (e.code) {
+      case 'user-not-found':
+        errorMessage = 'No existe ningún usuario con este correo.';
+        break;
+      case 'wrong-password':
+        _failedAttempts++;
+        if (_failedAttempts >= 3) {
+          _lockAccount();
+          return;
+        } else {
+          errorMessage = 'Contraseña incorrecta. Intento $_failedAttempts de 3.';
+        }
+        break;
+      case 'invalid-credential':
+        errorMessage = 'Las credenciales proporcionadas no son válidas.';
+        break;
+      case 'invalid-email':
+        errorMessage = 'El formato del correo electrónico no es válido.';
+        break;
+      case 'user-disabled':
+        errorMessage = 'La cuenta de este usuario ha sido deshabilitada.';
+        break;
+      case 'too-many-requests':
+        errorMessage = 'Demasiados intentos fallidos. Intenta más tarde.';
+        break;
+      case 'operation-not-allowed':
+        errorMessage = 'El inicio de sesión con correo y contraseña no está habilitado.';
+        break;
+    }
+    
+    if (errorMessage != null) {
+      _showCustomDialog(context, errorMessage);
+    }
+  }
+
+  void _lockAccount() {
+    _isLocked = true;
+    _lockEndTime = DateTime.now().add(_lockDuration);
+
+    _showCustomDialog(
+      context,
+      'Demasiados intentos fallidos. Cuenta bloqueada por ${_lockDuration.inSeconds} segundos.',
+    );
+
+    Future.delayed(_lockDuration, () {
+      setState(() {
+        _isLocked = false;
+        _failedAttempts = 0; // Reiniciar el contador de intentos
+      });
+    });
+  }
+
+  // Diálogo personalizado para mostrar errores
+  void _showCustomDialog(BuildContext context, String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          contentPadding: EdgeInsets.all(20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Algo salió mal',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.purpleAccent,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Text(
+                errorMessage,
+                style: TextStyle(fontSize: 16, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black, 
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Aceptar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -86,7 +192,7 @@ class _LoginState extends State<Login> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Image.asset('assets/logo.png', height: 100), // Logo de la aplicación
-                  const SizedBox(height: 20), // Espaciado entre el logo y el título
+                  const SizedBox(height: 20), 
                   const Text(
                     'EnSEÑA',
                     style: TextStyle(
@@ -102,13 +208,11 @@ class _LoginState extends State<Login> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
-
-                  // Formulario de inicio de sesión
+                  
                   Form(
                     key: _formKey,
                     child: Column(
                       children: [
-                        // Campo de correo electrónico
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -131,8 +235,6 @@ class _LoginState extends State<Login> {
                           },
                         ),
                         const SizedBox(height: 10),
-
-                        // Campo de contraseña
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
@@ -155,10 +257,34 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
+                  
+                  // Botón de "¿Olvidaste tu contraseña?"
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RecuperarContrasena()), 
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: '¿Olvidaste tu contraseña? ',
+                        style: TextStyle(color: const Color.fromARGB(255, 209, 209, 209)),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'Recupérala aquí',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 1),
 
-                  // Botón de inicio de sesión
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState?.validate() == true) {
@@ -171,19 +297,30 @@ class _LoginState extends State<Login> {
                       foregroundColor: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 10),
 
-                  // Botón para ir a la pantalla de registro
+                  // Línea separadora
+                  const SizedBox(height: 20), // Espacio antes de la línea
+                  Divider(
+                    color: Colors.white54, // Color de la línea (puedes ajustarlo)
+                    thickness: 1, // Grosor de la línea
+                    indent: 50, // Espacio desde la izquierda
+                    endIndent: 50, // Espacio desde la derecha
+                  ),
+
+
+                  const SizedBox(height: 2),
+                  
+                  // Botón de "¿No tienes una cuenta? Regístrate aquí"
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegistroPages()), // Pantalla de registro
+                        MaterialPageRoute(builder: (context) => RegistroPages()), 
                       );
                     },
                     child: RichText(
                       text: TextSpan(
-                        text: '¿No tienes cuenta? ',
+                        text: '¿No tienes una cuenta? ',
                         style: TextStyle(color: const Color.fromARGB(255, 209, 209, 209)),
                         children: <TextSpan>[
                           TextSpan(

@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Elimina el botón de "volver atrás"
         title: Text('¡Bienvenido de vuelta!'),
         actions: [
           Padding(
@@ -33,11 +34,13 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          IconButton(onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            Navigator.popAndPushNamed(context, Login.routename);
-          }, icon: const Icon(Icons.logout))
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.popAndPushNamed(context, Login.routename);
+            }, 
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
       body: SingleChildScrollView(
