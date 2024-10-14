@@ -33,6 +33,11 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+
+          IconButton(onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.popAndPushNamed(context, Login.routename);
+          }, icon: const Icon(Icons.logout))
         ],
       ),
       body: SingleChildScrollView(

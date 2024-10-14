@@ -28,6 +28,8 @@ class EnsenaApp extends StatelessWidget {
         RegistroPages.routename: (context) =>  RegistroPages(),
         ConfiguracionPage.routename: (context) =>  ConfiguracionPage()
 
+
+
       },
     );
   }
