@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -47,15 +48,25 @@ dependencies:
 
 dev_dependencies:
   change_app_package_name: ^1.1.0
+  flutter_launcher_icons: ^0.14.1
   flutter_test:
     sdk: flutter
+    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/Logo-App.png"
+  adaptive_icon_background: "#ffffff"  # Fondo del ícono adaptativo (puede ser transparente o color sólido)
+  adaptive_icon_foreground: "assets/Logo-App.png"  # Imagen para el primer plano del ícono adaptativo
+
 
 flutter_native_splash:
   color: "#54ace6"
