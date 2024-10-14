@@ -290,41 +290,6 @@ class _RegisterState extends State<RegistroPages> {
                         ),
                       ),
 
-
-                      // Advertencia de correo
-                      if (_hasEmailStarted && !_isEmailValid)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Center(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.red[50],
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.red, width: 1.5),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.warning, color: Colors.red),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      'El correo debe contener un @',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 10),
-
-                  
                       // Requisitos de la contraseña
                       if (_hasPasswordStarted && !allCriteriaValid)
                         Center(
