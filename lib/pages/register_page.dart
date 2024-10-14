@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';  // Para autenticación en Firebase
-import 'package:cloud_firestore/cloud_firestore.dart'; // Para guardar datos en Firestore
-import 'home.dart';  
-import 'login_page.dart';  // 
+
 import 'package:flutter/material.dart';
 import 'package:ensena_grupo3/util/auth.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -12,6 +8,8 @@ import 'package:ensena_grupo3/pages/login_page.dart';
 import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
 import 'package:ensena_grupo3/util/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistroPages extends StatefulWidget {
   @override
@@ -213,6 +211,8 @@ class _RegisterState extends State<RegistroPages> {
                           prefixIcon: Icon(Icons.email),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.8),
+
+
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -281,6 +281,7 @@ class _RegisterState extends State<RegistroPages> {
                           ),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.8),
+
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -289,8 +290,41 @@ class _RegisterState extends State<RegistroPages> {
                         ),
                       ),
 
+
+                      // Advertencia de correo
+                      if (_hasEmailStarted && !_isEmailValid)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.red[50],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.red, width: 1.5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.warning, color: Colors.red),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'El correo debe contener un @',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       SizedBox(height: 10),
 
+                  
                       // Requisitos de la contraseña
                       if (_hasPasswordStarted && !allCriteriaValid)
                         Center(
@@ -332,6 +366,7 @@ class _RegisterState extends State<RegistroPages> {
                               ],
                             ),
                           ),
+
                         ),
 
                       SizedBox(height: 20),
