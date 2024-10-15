@@ -18,7 +18,50 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Aquí incluirías la lógica de autenticación como ya tienes en tu código.
+  // Lógica para el inicio de sesión con Firebase
+  Future<void> _loginUser() async {
+    try {
+      // Ocultar el teclado
+      FocusScope.of(context).unfocus();
+
+      // Realizar el inicio de sesión
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Obtener el documento del usuario desde Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(userCredential.user?.uid)
+          .get();
+
+      // Validar si el documento del usuario existe
+      if (userDoc.exists) {
+        // Verificar si el widget sigue montado antes de navegar
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, HomePage.routename);
+        }
+      } else {
+        _showErrorSnackbar('Error: El usuario no tiene datos registrados.');
+      }
+    } on FirebaseAuthException catch (e) {
+      // Manejar errores de Firebase Authentication
+      if (e.code == 'user-not-found') {
+        _showErrorSnackbar('No existe ningún usuario con este correo.');
+      } else if (e.code == 'wrong-password') {
+        _showErrorSnackbar('Contraseña incorrecta.');
+      } else {
+        _showErrorSnackbar('Error en el inicio de sesión: ${e.message}');
+      }
+    }
+  }
+
+  // Mostrar un Snackbar con el mensaje de error
+  void _showErrorSnackbar(String message) {
+    final snackBar = SnackBar(content: Text(message), backgroundColor: Colors.red);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,14 +171,14 @@ class _LoginState extends State<Login> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() == true) {
-                          // Lógica de inicio de sesión aquí
+                          _loginUser(); // Llama a la función de inicio de sesión
                         }
                       },
                       child: const Text('Iniciar sesión'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 16), // Mayor altura del botón
+                        padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
                     
