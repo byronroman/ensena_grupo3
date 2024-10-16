@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Para el SystemChrome
 import 'package:firebase_auth/firebase_auth.dart';  // Para autenticación en Firebase
 import 'home.dart';  // Pantalla de inicio a la que se navega después del login
-import 'register_page.dart';  // Pantalla de registro
 import 'package:cloud_firestore/cloud_firestore.dart';  // Firestore para obtener datos del usuario
 import 'recuperar_contraseña.dart';  // Pantalla de recuperación de contraseña
 import 'opciones_sesion_page.dart';  // Página de Opciones de Sesión para navegar atrás
 
 class Login extends StatefulWidget {
   @override
-  static const String routename = 'Login'; 
+  static const String routename = 'Login';
   _LoginState createState() => _LoginState();
 }
 
@@ -17,6 +16,11 @@ class _LoginState extends State<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _emailError = false;
+  bool _passwordError = false;
+  bool _hasEmailStarted = false;
+  bool _hasPasswordStarted = false;
 
   // Lógica para el inicio de sesión con Firebase
   Future<void> _loginUser() async {
@@ -63,6 +67,38 @@ class _LoginState extends State<Login> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  // Validar correo
+  bool _validateEmail() {
+    String email = _emailController.text;
+    if (email.isEmpty || !email.contains('@')) {
+      setState(() {
+        _emailError = true;
+        _hasEmailStarted = true;
+      });
+      return false;
+    }
+    setState(() {
+      _emailError = false;
+    });
+    return true;
+  }
+
+  // Validar contraseña
+  bool _validatePassword() {
+    String password = _passwordController.text;
+    if (password.isEmpty) {
+      setState(() {
+        _passwordError = true;
+        _hasPasswordStarted = true;
+      });
+      return false;
+    }
+    setState(() {
+      _passwordError = false;
+    });
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +137,7 @@ class _LoginState extends State<Login> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Image.asset('assets/logo.png', height: 100), // Logo de la aplicación
-                    const SizedBox(height: 20), 
+                    const SizedBox(height: 20),
                     const Text(
                       'EnSEÑA',
                       style: TextStyle(
@@ -117,38 +153,69 @@ class _LoginState extends State<Login> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
-                    
+
                     Form(
                       key: _formKey,
                       child: Column(
                         children: [
+                          // Campo de correo electrónico
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
-                              labelText: 'Ingresa tu correo',
+                              hintText: 'Ingresa tu correo',  // Cambiamos a hintText para que desaparezca al escribir
                               prefixIcon: Icon(Icons.email),
                               filled: true,
                               fillColor: Colors.white.withOpacity(0.8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16), // Ajusta el relleno interno
+                              hintStyle: TextStyle(fontSize: 14), // Tamaño del texto de la pista
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa tu correo.';
-                              } else if (!value.contains('@')) {
-                                return 'El correo debe contener un @.';
-                              }
-                              return null;
-                            },
+                            onChanged: (_) => _validateEmail(), // Llamada a la función de validación
                           ),
+
+
+
+                          if (_hasEmailStarted && _emailError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Center(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.red, width: 1.5),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.warning, color: Colors.red),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          'El correo debe contener un @',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           const SizedBox(height: 10),
+
+                          // Campo de contraseña
                           TextFormField(
                             controller: _passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              labelText: 'Ingresa tu contraseña',
+                              hintText: 'Ingresa tu contraseña',
                               prefixIcon: Icon(Icons.lock),
                               filled: true,
                               fillColor: Colors.white.withOpacity(0.8),
@@ -156,21 +223,47 @@ class _LoginState extends State<Login> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa tu contraseña.';
-                              }
-                              return null;
-                            },
+                            onChanged: (_) => _validatePassword(),
                           ),
+                          if (_hasPasswordStarted && _passwordError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Center(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.red, width: 1.5),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.warning, color: Colors.red),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          'Por favor, ingresa tu contraseña',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 20),
+
+                    // Botón de inicio de sesión
                     ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState?.validate() == true) {
+                        if (_validateEmail() && _validatePassword()) {
                           _loginUser(); // Llama a la función de inicio de sesión
                         }
                       },
@@ -181,13 +274,13 @@ class _LoginState extends State<Login> {
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
-                    
+
                     // Botón de "¿Olvidaste tu contraseña?"
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RecuperarContrasena()), 
+                          MaterialPageRoute(builder: (context) => RecuperarContrasena()),
                         );
                       },
                       child: RichText(

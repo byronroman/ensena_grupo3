@@ -1,23 +1,18 @@
-
 import 'package:flutter/material.dart';
-import 'package:ensena_grupo3/util/auth.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:ensena_grupo3/pages/home.dart';
-import 'package:ensena_grupo3/pages/login_page.dart';
-import 'package:ensena_grupo3/preferences/pref_usuarios.dart';
-import 'package:ensena_grupo3/util/snackbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistroPages extends StatefulWidget {
+  const RegistroPages({super.key}); 
+
+  static const String routename = 'RegistroPages';
+  
   @override
-  static const String routename = 'RegistroPages'; 
-  _RegisterState createState() => _RegisterState();
+  RegisterState createState() => RegisterState(); // Clase pública
 }
 
-class _RegisterState extends State<RegistroPages> {
+class RegisterState extends State<RegistroPages> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -106,8 +101,10 @@ class _RegisterState extends State<RegistroPages> {
         'password': _passwordController.text,
       });
 
-      // Navegar a la pantalla de inicio después del registro
-      Navigator.pushReplacementNamed(context, HomePage.routename);
+      // Verificar si el widget sigue montado antes de navegar
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, HomePage.routename);
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         _showErrorSnackbar('La contraseña es demasiado débil.');
@@ -182,7 +179,7 @@ class _RegisterState extends State<RegistroPages> {
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: 'Ingresa tu nombre de usuario',
+                          hintText: 'Ingresa tu nombre de usuario',
                           prefixIcon: Icon(Icons.person),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.8),
@@ -207,12 +204,10 @@ class _RegisterState extends State<RegistroPages> {
                           _validateEmail(value);
                         },
                         decoration: InputDecoration(
-                          labelText: 'Ingresa tu mail',
+                          hintText: 'Ingresa tu mail',
                           prefixIcon: Icon(Icons.email),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.8),
-
-
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -267,7 +262,7 @@ class _RegisterState extends State<RegistroPages> {
                           _validatePassword(value);
                         },
                         decoration: InputDecoration(
-                          labelText: 'Ingresa tu contraseña',
+                          hintText: 'Ingresa tu contraseña',
                           prefixIcon: Icon(Icons.lock),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -281,7 +276,6 @@ class _RegisterState extends State<RegistroPages> {
                           ),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.8),
-
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -338,14 +332,14 @@ class _RegisterState extends State<RegistroPages> {
 
                       // Botón de registro
                       ElevatedButton(
-                        onPressed: _canRegister() ? _registerUser : null,
-                        child: Text('Registrar'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _canRegister() ? Colors.purple : Colors.grey,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
                           textStyle: TextStyle(fontSize: 18),
                         ),
+                        onPressed: _canRegister() ? _registerUser : null,
+                        child: Text('Registrar'),  // Mover child al final de los parámetros
                       ),
                       SizedBox(height: 40),
                     ],
