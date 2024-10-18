@@ -21,6 +21,7 @@ class _LoginState extends State<Login> {
   bool _passwordError = false;
   bool _hasEmailStarted = false;
   bool _hasPasswordStarted = false;
+  bool _isPasswordVisible = false; // Controla la visibilidad de la contraseña
 
   // Lógica para el inicio de sesión con Firebase
   Future<void> _loginUser() async {
@@ -47,25 +48,79 @@ class _LoginState extends State<Login> {
           Navigator.pushReplacementNamed(context, HomePage.routename);
         }
       } else {
-        _showErrorSnackbar('Error: El usuario no tiene datos registrados.');
+        _showErrorDialog('Error: El usuario no tiene datos registrados.');
       }
     } on FirebaseAuthException catch (e) {
       // Manejar errores de Firebase Authentication
       if (e.code == 'user-not-found') {
-        _showErrorSnackbar('No existe ningún usuario con este correo.');
+        _showErrorDialog('No existe ningún usuario con este correo.');
       } else if (e.code == 'wrong-password') {
-        _showErrorSnackbar('Contraseña incorrecta.');
+        _showErrorDialog('Contraseña incorrecta.');
+      } else if (e.code == 'invalid-email') {
+        _showErrorDialog('El correo electrónico está mal formateado.');
       } else {
-        _showErrorSnackbar('Error en el inicio de sesión: ${e.message}');
+        _showErrorDialog('Error en el inicio de sesión: ${e.message}');
       }
     }
   }
 
-  // Mostrar un Snackbar con el mensaje de error
-  void _showErrorSnackbar(String message) {
-    final snackBar = SnackBar(content: Text(message), backgroundColor: Colors.red);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  // Mostrar un cuadro de diálogo personalizado con el mensaje de error
+    void _showErrorDialog(String message) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ), // Bordes redondeados
+            title: Text(
+              'Credenciales Incorrectas',
+              style: TextStyle(
+                color: Colors.purple,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold, // Texto en negrita para el error
+                  ),
+                  textAlign: TextAlign.center, // Centramos el mensaje de error principal
+                ),
+                const SizedBox(height: 24), // Espacio más amplio entre los textos
+                Text(
+                  'Por favor, verifica tu correo y contraseña.',
+                  style: TextStyle(
+                    color: Colors.black54,
+                  ),
+                  textAlign: TextAlign.center, // Centramos el texto de sugerencia
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar el diálogo
+                },
+                child: Text('Aceptar', style: TextStyle(color: Colors.white)),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.purple, // Color de fondo del botón
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ), // Bordes del botón
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+
 
   // Validar correo
   bool _validateEmail() {
@@ -176,8 +231,6 @@ class _LoginState extends State<Login> {
                             onChanged: (_) => _validateEmail(), // Llamada a la función de validación
                           ),
 
-
-
                           if (_hasEmailStarted && _emailError)
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
@@ -210,10 +263,10 @@ class _LoginState extends State<Login> {
                             ),
                           const SizedBox(height: 10),
 
-                          // Campo de contraseña
+                          // Campo de contraseña con visibilidad controlada
                           TextFormField(
                             controller: _passwordController,
-                            obscureText: true,
+                            obscureText: !_isPasswordVisible, // Mostrar u ocultar contraseña
                             decoration: InputDecoration(
                               hintText: 'Ingresa tu contraseña',
                               prefixIcon: Icon(Icons.lock),
@@ -222,9 +275,20 @@ class _LoginState extends State<Login> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                              ),
                             ),
                             onChanged: (_) => _validatePassword(),
                           ),
+
                           if (_hasPasswordStarted && _passwordError)
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
