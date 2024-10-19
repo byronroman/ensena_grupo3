@@ -28,7 +28,7 @@ class EnsenaApp extends StatelessWidget {
         Login.routename: (context) => Login(),
         HomePage.routename: (context) => HomePage(),
         RegistroPages.routename: (context) => RegistroPages(),
-        ConfiguracionPage.routename: (context) => ConfiguracionPage(),
+        ConfiguracionPage.routename: (context) => ConfiguracionPage()
       },
     );
   }

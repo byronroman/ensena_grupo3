@@ -12,7 +12,20 @@
           "package_name": "com.grupo3.ensena"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "772143071518-l2pihbu6eao1hbngck04d6nhefulskp0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grupo3.ensena",
+            "certificate_hash": "78cf28ad7c39227aee60efbd85437b137ca1fe41"
+          }
+        },
+        {
+          "client_id": "772143071518-marsksn7nrorrk0vr9i9ou6igu92ug66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCeJro2wEDFodZcs1Jw1I-PWaxvB22T2-M"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "772143071518-marsksn7nrorrk0vr9i9ou6igu92ug66.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "772143071518-43fhirubuv8f56p50asrc82d61akbs1v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ensenaGrupo3"
+              }
+            }
+          ]
         }
       }
     }

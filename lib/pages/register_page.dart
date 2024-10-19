@@ -96,6 +96,7 @@ class RegisterState extends State<RegistroPages> {
           .collection('user')
           .doc(userCredential.user?.uid)
           .set({
+        'createdAt': FieldValue.serverTimestamp(),
         'username': _usernameController.text,
         'email': _emailController.text,
         'password': _passwordController.text,

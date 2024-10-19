@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ensena_grupo3/pages/login_page.dart';
 import 'package:ensena_grupo3/pages/configuracion.dart'; 
+import 'package:ensena_grupo3/pages/opciones_sesion_page.dart'; 
 
 class HomePage extends StatelessWidget {
   @override
@@ -31,7 +32,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              Navigator.popAndPushNamed(context, Login.routename);
+              Navigator.popAndPushNamed(context, 'opciones');
             }, 
             icon: const Icon(Icons.logout),
           ),

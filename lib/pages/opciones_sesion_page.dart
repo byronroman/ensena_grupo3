@@ -1,8 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Autenticación de Firebase
+import 'package:google_sign_in/google_sign_in.dart'; // Google Sign-In
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:ensena_grupo3/pages/login_page.dart';
 import 'package:ensena_grupo3/pages/register_page.dart'; // Pantalla de registro (RegistroPages)
+import 'home.dart'; // Página principal de la app
 
-class OpcionesSesionPage extends StatelessWidget {
+class OpcionesSesionPage extends StatefulWidget {
+  @override
+  _OpcionesSesionPageState createState() => _OpcionesSesionPageState();
+}
+
+class _OpcionesSesionPageState extends State<OpcionesSesionPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Función para iniciar sesión con Google
+  Future<void> _signInWithGoogle() async {
+    try {
+      // Cerrar sesión de Google si ya hay una sesión activa
+      await _googleSignIn.signOut();
+
+      // Iniciar el flujo de inicio de sesión con Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // El usuario canceló el flujo de inicio de sesión
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Guardar los datos del usuario en Firestore
+        await _saveUserData(user);
+
+        // Redirigir al HomePage si el inicio de sesión fue exitoso
+        Navigator.pushReplacementNamed(context, HomePage.routename);
+      }
+    } catch (e) {
+      print("Error al iniciar sesión con Google: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al iniciar sesión con Google')),
+      );
+    }
+  }
+
+  // Guardar los datos del usuario en Firestore
+  Future<void> _saveUserData(User user) async {
+    try {
+      DocumentSnapshot userDoc = await _firestore.collection('user').doc(user.uid).get();
+
+      if (!userDoc.exists) {
+        await _firestore.collection('user').doc(user.uid).set({
+          'email': user.email,
+          'username': user.displayName ?? 'Usuario',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      print("Error al guardar los datos del usuario en Firestore: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,11 +117,11 @@ class OpcionesSesionPage extends StatelessWidget {
                 SizedBox(height: 40),
                 // Botón de Iniciar sesión con Google
                 ElevatedButton.icon(
-                  onPressed: () {
-                    // Implementar la lógica de Google Sign-In
+                  onPressed: () async {
+                    await _signInWithGoogle(); // Ejecuta la lógica de Google Sign-In
                   },
                   icon: Image.asset(
-                    'assets/google_icon.png', // Icono de Google (reemplázalo)
+                    'assets/google_icon.png', // Icono de Google (asegúrate de tenerlo)
                     height: 24,
                   ),
                   label: Text(
@@ -70,7 +137,7 @@ class OpcionesSesionPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                // Botón de Iniciar sesión con mail (cambiado a blanco y con ícono a la izquierda)
+                // Botón de Iniciar sesión con correo
                 ElevatedButton.icon(
                   onPressed: () {
                     // Navegar a la página de inicio de sesión con correo
@@ -123,7 +190,6 @@ class OpcionesSesionPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
               ],
             ),
           ),
