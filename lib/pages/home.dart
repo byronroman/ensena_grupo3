@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Elimina el botón de "volver atrás"
+        automaticallyImplyLeading: false, 
         title: Text('¡Bienvenido de vuelta!'),
         actions: [
           Padding(
@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
                 // Navegar a la página de configuración
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ConfiguracionPage()), // Asegúrate de tener esta clase creada
+                  MaterialPageRoute(builder: (context) => ConfiguracionPage()), 
                 );
               },
               child: CircleAvatar(
